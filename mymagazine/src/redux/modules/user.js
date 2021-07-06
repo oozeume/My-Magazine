@@ -29,8 +29,6 @@ const user_initial = {
   nickname: 'mean0',
 }
 
-
-
 // Middleware Action
 // firebase에서 로그인하는 함수
 const loginFB = (id, pwd) => {
@@ -57,12 +55,21 @@ const loginFB = (id, pwd) => {
 // firebase 인증의 '현재 로그인한 사용자' 가져오는 함수
 const loginCheckFB = () => {
   return function (dispatch, getState, { history }) {
-    auth.onAuthStateChanged((user)=>{
-      if(user){
-        dispatch(setUser({nickname: user.displayName, id: user.email, user_profile: '', uid: user.uid,}))
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        dispatch(setUser({ nickname: user.displayName, id: user.email, user_profile: '', uid: user.uid, }))
       } else {
         dispatch(logOut());
       }
+    })
+  }
+}
+
+const logoutFB = () => {
+  return function (dispatch, getState, { history }) {
+    auth.signOut().then(() => {
+      dispatch(logOut());
+      history.replace('/');
     })
   }
 }
@@ -95,6 +102,7 @@ const signupFB = (id, pwd, nickname) => {
   }
 }
 
+
 // Reducer
 export default handleActions(
   {
@@ -124,6 +132,7 @@ const actionCreators = {
   signupFB,
   loginFB,
   loginCheckFB,
+  logoutFB,
 }
 export { actionCreators };
 

@@ -29,7 +29,7 @@ const Header = (props) => {
           <Button color='#fff' bg='black' text='LOGOUT' padding='12px'
             _onClick={() => {
               console.log('로그아웃했어');
-              dispatch(userActions.logOut({}));
+              dispatch(userActions.logoutFB({}));
             }}
           ></Button>
 
