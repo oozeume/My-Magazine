@@ -26,36 +26,64 @@ const initialState = {
   is_login: false,
 }
 const user_initial = {
-  user_name: 'mean0',
+  nickname: 'mean0',
 }
 
 
 
 // Middleware Action
-// 로그인이 되면 메인페이지로 이동 
-const loginAction = (user) => {
+// firebase에서 로그인하는 함수
+const loginFB = (id, pwd) => {
   return function (dispatch, getState, { history }) {
-    dispatch(setUser(user)); // 로그인이 들어오면 실제로도 logIn액션을 해줘야하니까
-    history.push('/');
+
+    auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).then((res) => {
+      auth.signInWithEmailAndPassword(id, pwd)
+        .then((user) => {
+          // 로그인한 다음에 뭐를 할건지 작성하는 부분
+          console.log(user); // user안에 확인해서 nickname이 어디들어가는지 찾아서 가져와준다.
+          dispatch(setUser({ nickname: user.user.displayName, id: id, user_profile: '', uid: user.user.uid, }));
+          history.push('/');
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+        });
+    });
   }
 }
+
+
+// 새로고침래도 로그인 정보 안날아가게 다시 로그인 체크해서 리덕스에 정보 넣어주는 것
+// firebase 인증의 '현재 로그인한 사용자' 가져오는 함수
+const loginCheckFB = () => {
+  return function (dispatch, getState, { history }) {
+    auth.onAuthStateChanged((user)=>{
+      if(user){
+        dispatch(setUser({nickname: user.displayName, id: user.email, user_profile: '', uid: user.uid,}))
+      } else {
+        dispatch(logOut());
+      }
+    })
+  }
+}
+
 
 // 가입시키기위한 유저 정보를 받아서 넘겨줘야겠지 (넘겨주는 함수호출)
 const signupFB = (id, pwd, nickname) => {
   return function (dispatch, getState, { history }) {
     auth
-    .createUserWithEmailAndPassword(id, pwd)
+      .createUserWithEmailAndPassword(id, pwd)
       .then((user) => {
-        
+
         auth.currentUser.updateProfile({
           displayName: nickname, // 닉네임 추가로 가져와서 업데이트 해준다.
-        }).then(()=>{
+        }).then(() => {
           // 여기까지 성공했다면 id, pwd, nickname까지 잘 가져와진 것
           // 그러면 이제 로그인상태로 바꿔주고싶어
           // setUser에 유저 정보를 담아서 보낸다. 
-          dispatch(setUser({nickname: nickname, id: id, user_profile: ''}));
+          dispatch(setUser({ nickname: nickname, id: id, user_profile: '', uid: user.user.uid, }));
           history.push('/');
-        }).catch((error)=>{
+        }).catch((error) => {
           console.log(error);
         });
       })
@@ -91,11 +119,11 @@ export default handleActions(
 
 // ActionCreator export
 const actionCreators = {
-  // logIn,
   logOut,
   getUser,
-  loginAction,
   signupFB,
+  loginFB,
+  loginCheckFB,
 }
 export { actionCreators };
 

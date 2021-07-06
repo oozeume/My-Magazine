@@ -20,12 +20,7 @@ const Signup = (props) => {
 
   const signup = () => {
     if (pwd !== pwd_check) {
-      alert('패스워드를 체크해주세요');
-      return; // 실행안시키고 함수 종료시켜버림
-    }
-
-    if (pwd.length !== Number(6)) {
-      alert('패스워드를 6자 이상 입력해주세요');
+      window.alert('패스워드를 체크해주세요');
       return; // 실행안시키고 함수 종료시켜버림
     }
 
@@ -52,11 +47,13 @@ const Signup = (props) => {
         }}
       ></Input>
       <Input label="패스워드" placeholder="패스워드를 입력해주세요"
+        type="password"
         _onChange={(e) => {
           setPwd(e.target.value);
         }}
       ></Input>
       <Input label="패스워드 확인" placeholder="패스워드를 확인해주세요"
+        type="password"
         _onChange={(e) => {
           setPwdCheck(e.target.value);
         }}
