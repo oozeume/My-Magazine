@@ -1,5 +1,5 @@
 import { createAction, handleActions } from "redux-actions"
-import { produce } from "immer";
+import produce from "immer";
 
 import { setCookie } from "../../shared/Cookie";
 
@@ -25,7 +25,7 @@ const initialState = {
 // Middleware Action
 // 로그인이 되면 메인페이지로 이동 
 const loginAction = (user) => {
-  return function (dispatch, getState, {history}){
+  return function (dispatch, getState, { history }) {
     dispatch(logIn(user)); // 로그인이 들어오면 실제로도 logIn액션을 해줘야하니까
     history.push('/');
   }
@@ -34,20 +34,20 @@ const loginAction = (user) => {
 // Reducer
 export default handleActions(
   {
-    [LOG_IN]: (state, action) => { produce(state, (draft) => {
-      setCookie('is_login', 'success');
-      draft.user = action.payload.user;
-      draft.is_login = true;
-    })
-    },
-    [LOG_OUT]: (state, action) => {produce(state, (draft) => {
-        
+    [LOG_IN]: (state, action) => produce(state, (draft) => {
+        setCookie('is_login', 'success');
+        draft.user = action.payload.user;
+        draft.is_login = true;
+      }),
+    [LOG_OUT]: (state, action) => 
+      produce(state, (draft) => {
+
+      }),
+    [GET_USER]: (state, action) => 
+      produce(state, (draft) => {
+
       })
-    },
-    [GET_USER]: (state, action) => {produce(state, (draft) => {
-        
-      })
-    }
+    
   }, initialState
 )
 
@@ -58,5 +58,5 @@ const actionCreators = {
   getUser,
   loginAction,
 }
-export {actionCreators};
+export { actionCreators };
 

@@ -11,9 +11,7 @@ import { actionCreators as userActions } from "../redux/modules/user";
 const Login = (props) => {
     const dispatch = useDispatch();
 
-    const login = () => {
-        dispatch(userActions.loginAction('jieum'));
-    }
+    const login = () => {dispatch(userActions.loginAction({user_name: 'jieum'}))}
 
     return (
         <div>

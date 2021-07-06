@@ -13,8 +13,6 @@ const Header = (props) => {
     const dispatch = useDispatch();
     const is_login = useSelector((state) => state.user.is_login);
 
-    console.log(is_session);
-
     // if문으로 로그인 되면 헤더 변경해주기
     if (is_login) {
         return (
