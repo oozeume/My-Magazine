@@ -22,7 +22,9 @@ const Header = (props) => {
                     <Button color='#fff' bg='black' text='MYPAGE' padding='12px'></Button>
                     <Button color='#fff' bg='black' text='NOTICE' padding='12px'></Button>
                     <Button color='#fff' bg='black' text='LOGOUT' padding='12px'
-                        _onClick={() => { dispatch(userActions.logOut({})); }}
+                        _onClick={() => { 
+                            console.log('로그아웃했어');
+                            dispatch(userActions.logOut({})); }}
                     ></Button>
 
                 </Grid>

@@ -39,7 +39,6 @@ Input.defaultProps = {
   _onChange: () => { },
   type: 'text',
   value: '',
-
 }
 
 const ElementInput = styled.input`
