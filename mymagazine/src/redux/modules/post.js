@@ -1,11 +1,13 @@
 import { createAction, handleActions } from "redux-actions"
 import produce from "immer";
+import moment from "moment";
 
-import { firestore } from "../../shared/firebase";
+import { firestore, storage } from "../../shared/firebase";
+import { actionCreators as imageActions } from "./image";
 
 // Action
 const SET_POST = "SET_POST"; // 파이어베이스에서 가져오면 목록을 리덕스에 넣어주는 액션
-const ADD_POST = "ADD_POST"; // 리덕스 데이터 추가 액션
+const ADD_POST = "ADD_POST"; // 리덕스 데이터 추가해주는 액션
 
 // ActionCreator
 const setPost = createAction(SET_POST, (post_list) => ({ post_list }));
@@ -21,18 +23,18 @@ const initialState = {
 // 게시글 하나에 어떤 정보가 있어야하는지 임의로 적어둔다. 
 const initialPost = {
   // 유저 정보, 게시글 이미지, 게시글 내용, 댓글 개수, 작성날짜 
-  user_info: {
-    id: 0,
-    nickname: 'jieum_woo',
-    user_profile: "https://mean0images.s3.ap-northeast-2.amazonaws.com/4.jpeg",
-  },
+  // user_info: {
+  //   id: 0,
+  //   nickname: 'jieum_woo',
+  //   user_profile: "https://mean0images.s3.ap-northeast-2.amazonaws.com/4.jpeg",
+  // },
   image_url: "https://mean0images.s3.ap-northeast-2.amazonaws.com/4.jpeg",
   contents: "내용이 들어갈 자리입니다.",
   comment_count: 10,
   insert_dt: "2021-02-27 10:00:00",
 }
 
-// Middleware Action
+// Middleware ActionCreator
 const getPostFB = () => { // 당장은 파이어베이스 스토어에 올려져있는걸 가져올거니까 값 받아올게 없어서 () 비워줌
   return function (dispatch, getState, { history }) {
     const postDB = firestore.collection('magazine');
@@ -68,6 +70,65 @@ const getPostFB = () => { // 당장은 파이어베이스 스토어에 올려져
       console.log("Error getting document:", error);
     }
     );
+  }
+}
+
+const addPostFB = (contents = "") => { // PostWrite.js에서 썼던 contents 받아온다.
+  return function (dispatch, getState, { history }) {
+    const postDB = firestore.collection('magazine');
+
+    // 유저정보와 작성한 포스트 정보를 합쳐서 파이어베이스 스토어에 보내야한다. 
+    const _user = getState().user.user;
+    const user_info = {
+      nickname: _user.nickname,
+      user_id: _user.uid,
+      user_profile: _user.user_profile,
+    };
+    console.log(_user);
+
+    const _post = {
+      ...initialPost,
+      contents: contents, // 여기서 가져온건 input에 작성한 거
+      insert_dt: moment().format("YYYY-MM-DD hh:mm:ss")
+    }
+    console.log(_post);
+
+    //preview에 올라간 이미지의 url가져올거다
+    const _image = getState().image.preview_image;
+    console.log(_image);
+    console.log(typeof _image);
+    //ref()안에 파일 이름을 넣어주는데(파일 이름 지정해주는 방식-작성자id와 현재시간)- 한사람당 같은 시간에 한장밖에 못올리니까
+    const _upload = storage.ref(`images/${user_info.user_id}_${new Date().getTime()}`).putString(_image, "data_url");
+    
+    _upload.then((snapshot) => {
+      snapshot.ref.getDownloadURL().then(url => {
+        console.log(url); // 링크 이제 받아왔으니까 파이어스토어에 저장할 때 image_url 같이 넣어줄 수 있겠다. 
+
+        return url; //여기서 리턴해준 url을 .then()에서 사용할 수 있다. 
+      }).then((url) => {
+        postDB.add({ ...user_info, ..._post, image_url: url })
+        .then((doc) => {
+          // add해줄거에다가 아이디도 추가해준다. 
+          let post = { user_info, ..._post, id: doc.id, image_url: url };
+          dispatch(addPost(post));
+          history.replace("/");
+
+
+          // 이미지 업로드하고나면 프리뷰 다시 기본값으로 보여야하니까. 
+          dispatch(imageActions.setPreview(null)); 
+          
+        }).catch((error) => {
+          window.alert('post 작성 실패');
+          console.log('post 작성 실패', error);
+        });
+      }).catch((error)=> {
+        window.alert('앗, 이미지 업로드에 문제가 있어요');
+        console.log('앗, 이미지 업로드에 문제가 있어요', error);
+      })
+    })
+
+
+
 
   }
 }
@@ -79,7 +140,7 @@ export default handleActions(
       draft.list = action.payload.post_list;
     }),
     [ADD_POST]: (state, action) => produce(state, (draft) => {
-
+      draft.list.unshift(action.payload.post);
     }),
   }, initialState
 );
@@ -89,6 +150,7 @@ const actionCreators = {
   setPost,
   addPost,
   getPostFB,
+  addPostFB,
 }
 
 export { actionCreators };

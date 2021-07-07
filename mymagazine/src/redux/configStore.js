@@ -3,8 +3,9 @@ import thunk from "redux-thunk";
 import { createBrowserHistory } from "history";
 import { connectRouter } from "connected-react-router";
 
-import User from "./modules/user"; // user.js의 리듀서 가지고옴
-import Post from "./modules/post"; // post.js의 리듀서 가지고옴
+import User from "./modules/user"; // user.js 유저 모듈 import
+import Post from "./modules/post"; // post.js의 포스트 모듈 import
+import Image from "./modules/image"; // image.js의 이미지 모듈 import
 
 // 히스토리 만들기
 export const history = createBrowserHistory(); // history객체 생성
@@ -12,6 +13,7 @@ export const history = createBrowserHistory(); // history객체 생성
 const rootReducer = combineReducers({ // 리듀서 만들때마다 여기 넣어주면 된다. 
     user: User,
     post: Post,
+    image: Image,
     router: connectRouter(history), // 우리가 위에서 만든 history랑 Router가 연결되었음
 });
 
