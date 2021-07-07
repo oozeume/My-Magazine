@@ -25,9 +25,6 @@ const initialState = {
   user: null,
   is_login: false,
 }
-const user_initial = {
-  nickname: 'mean0',
-}
 
 // Middleware Action
 // firebase에서 로그인하는 함수

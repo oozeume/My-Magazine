@@ -25,7 +25,7 @@ const PostList = (props) => {
             {/* post_list를 props로 다 넘겨주는 작업 */}
             {post_list.map((post, index) => {
                 if (post.user_info.user_id === user_info?.uid) {
-                    return <Post {...post} key={post.id} />
+                    return <Post {...post} key={post.id} is_me />
                 } else {
                     return <Post {...post} key={post.id} />
                 }

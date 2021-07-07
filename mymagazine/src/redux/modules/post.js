@@ -8,11 +8,13 @@ import { actionCreators as imageActions } from "./image";
 // Action
 const SET_POST = "SET_POST"; // 파이어베이스에서 가져오면 목록을 리덕스에 넣어주는 액션
 const ADD_POST = "ADD_POST"; // 리덕스 데이터 추가해주는 액션
+const EDIT_POST = "EDIT_POST";
 
 // ActionCreator
 const setPost = createAction(SET_POST, (post_list) => ({ post_list }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
-
+// 어떤거를 수정할지 알아야하니까 post_id필요로한다. 그리고 post 딕셔너리
+const editPost = createAction(EDIT_POST, (post_id, post) => ({ post_id, post,}));
 
 // initialState
 // 실제 리듀서가 사용할 initialState
@@ -35,6 +37,56 @@ const initialPost = {
 }
 
 // Middleware ActionCreator
+const editPostFB = (post_id = null, post = {}) => {
+  return function (dispatch, getState, { history }){
+    if (!post_id) {
+      console.log('게시물 정보가 없어요!');
+      return;
+    }
+
+    const _image = getState().image.preview_image;
+
+    const _post_index = getState().post.list.findIndex((p)=> p.id === post_id);
+    const _post = getState().post.list[_post_index];
+
+    console.log(_post);
+
+    const postDB = firestore.collection('magazine');
+
+    // preview에 있는 이미지랑 _post의 image_url이랑 같은지 확인
+    if (_image === _post.image_url){
+      postDB.doc(post_id).update(post).then((doc)=> {
+        dispatch(editPost(post_id, {...post}));
+        history.replace("/");
+      });
+      return;
+    } else {
+      const user_id = getState().user.user.uid;
+      const _upload = storage.ref(`images/${user_id}_${new Date().getTime()}`)
+      .putString(_image, "data_url");
+
+      _upload.then((snapshot)=> {
+        snapshot.ref.getDownloadURL().then((url)=> {
+          console.log(url);
+          return url;
+        }).then((url)=>{
+          postDB.doc(post_id).update({ ...post, image_url: url }).then((doc)=>{
+            dispatch(editPost(post_id, { ...post, image_url: url }));
+            history.replace('/');
+          });
+        }).catch((error)=>{
+          window.alert("앗! 이미지 업로드에 문제가 있어요!");
+            console.log("앗! 이미지 업로드에 문제가 있어요!", error);
+        })
+      })
+    }
+
+  }
+}
+
+
+
+
 const getPostFB = () => { // 당장은 파이어베이스 스토어에 올려져있는걸 가져올거니까 값 받아올게 없어서 () 비워줌
   return function (dispatch, getState, { history }) {
     const postDB = firestore.collection('magazine');
@@ -142,6 +194,10 @@ export default handleActions(
     [ADD_POST]: (state, action) => produce(state, (draft) => {
       draft.list.unshift(action.payload.post);
     }),
+    [EDIT_POST]: (state, action) => produce(state, (draft) => {
+      let index = draft.list.findIndex((p)=> p.id === action.payload.post_id);
+      draft.list[index] = {...draft.list[index], ...action.payload.post};
+    }),
   }, initialState
 );
 
@@ -149,8 +205,10 @@ export default handleActions(
 const actionCreators = {
   setPost,
   addPost,
+  editPost,
   getPostFB,
   addPostFB,
+  editPostFB,
 }
 
 export { actionCreators };

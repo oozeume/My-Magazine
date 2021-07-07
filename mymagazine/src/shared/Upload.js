@@ -49,7 +49,7 @@ const Upload = (props) => {
         onChange={selectFile}
         disabled={uploading}
       />
-      <Button _onClick={uploadFB}>사진 업로드 하기</Button>
+      <Button _onClick={uploadFB} text="사진 업로드 하기" color='#fff'></Button>
     </React.Fragment>
   );
 }
