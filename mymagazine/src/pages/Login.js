@@ -26,7 +26,7 @@ const Login = (props) => {
     }
 
     return (
-        <div>
+        <React.Fragment>
             <Text size="42px" bold>LOGIN</Text>
             <Input label="이메일" placeholder="이메일을 입력해주세요"
                 _onChange={(e) => {
@@ -48,7 +48,7 @@ const Login = (props) => {
             >
 
             </Button>
-        </div>
+        </React.Fragment>
     )
 }
 

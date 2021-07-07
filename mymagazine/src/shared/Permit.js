@@ -10,9 +10,9 @@ const Permit = (props) => {
 
     if (is_session && is_user){
         return (
-            <div>
+            <React.Fragment>
                 {props.children}
-            </div>
+            </React.Fragment>
         );
     }
     return null;

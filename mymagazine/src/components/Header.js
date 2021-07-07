@@ -39,7 +39,7 @@ const Header = (props) => {
   }
 
   return (
-    <div>
+    <React.Fragment>
       <Grid is_flex>
         <Text size="40px"> MM </Text>
         <Grid is_flex>
@@ -57,7 +57,7 @@ const Header = (props) => {
       </Grid>
 
 
-    </div>
+    </React.Fragment>
   )
 }
 

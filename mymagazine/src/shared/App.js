@@ -7,12 +7,17 @@ import { history } from '../redux/configStore';
 
 import Header from '../components/Header';
 import PostList from '../pages/PostList';
+import PostWrite from '../pages/PostWrite';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
+import Permit from './Permit';
+import PostDetail from '../pages/PostDetail';
+
+import Button from '../elements/Button';
 
 import { useDispatch } from "react-redux";
-import {actionCreators as userActions} from "../redux/modules/user";
-import {apiKey} from "./firebase";
+import { actionCreators as userActions } from "../redux/modules/user";
+import { apiKey } from "./firebase";
 
 function App() {
   const dispatch = useDispatch();
@@ -29,14 +34,26 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <React.Fragment>
       <Header></Header>
       <ConnectedRouter history={history}>
         <Route path="/" exact component={PostList} />
         <Route path="/login" exact component={Login} />
         <Route path="/signup" exact component={Signup} />
+        <Route path="/write" exact component={PostWrite} />
+        <Route path="/post" exact component={PostDetail} />
       </ConnectedRouter>
-    </div>
+      <Permit>
+        <Button
+          is_float
+          text='+'
+          _onClick={() => {
+            history.push("/write");
+          }}
+        ></Button>
+      </Permit>
+
+    </React.Fragment>
   );
 }
 

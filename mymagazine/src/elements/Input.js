@@ -8,7 +8,7 @@ const Input = (props) => {
 
   if (multiLine) {
     return (
-      <div>
+      <React.Fragment>
         {label && <Text>{label}</Text>}
         <ElementTextarea
           rows={10}
@@ -16,19 +16,19 @@ const Input = (props) => {
           placeholder={placeholder}
           onChange={_onChange}
         ></ElementTextarea>
-      </div>
+      </React.Fragment>
     )
   };
 
   return (
-    <div>
+    <React.Fragment>
       {label && <Text>{label}</Text>}
       <ElementInput
         type={type}
         placeholder={placeholder}
         onChange={_onChange}
       ></ElementInput>
-    </div>
+    </React.Fragment>
   )
 }
 
