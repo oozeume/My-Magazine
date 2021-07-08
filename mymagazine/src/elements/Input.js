@@ -22,7 +22,7 @@ const Input = (props) => {
 
   return (
     <React.Fragment>
-      {label && <Text>{label}</Text>}
+      {label && <Text >{label}</Text>}
       <ElementInput
         type={type}
         placeholder={placeholder}

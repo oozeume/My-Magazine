@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
+import styled from "styled-components";
+
 import Button from "../elements/Button";
 import Input from "../elements/Input";
 import Grid from "../elements/Grid";
@@ -76,32 +78,43 @@ const PostWrite = (props) => {
 
   return (
     <React.Fragment>
-      <Text size="36px" bold>
-        {is_edit ? "게시글 수정" : "게시글 작성"}
+      <Align>
+        <Text size="36px" margin="0px 0px 20px 0px">
+          {is_edit ? "게시글 수정" : "게시글 작성"}
 
-      </Text>
-      <Upload />
-
-      <Grid>
-        <Text margin="0px" size="24px" bold>
-          Preview
         </Text>
-        <Image shape="rectangle"
-          src={preview ? preview : "http://via.placeholder.com/400x300"} />
-      </Grid>
+        <Grid>
+          <Upload />
+        </Grid>
+        <Grid>
+          <Text margin="0px" size="24px" bold>
+            Preview
+          </Text>
+          <Image shape="rectangle"
+            src={preview ? preview : "http://via.placeholder.com/400x300"} />
+        </Grid>
 
-      <Grid padding="16px">
-        <Input label="게시글 내용" placeholder="게시글 작성" multiLine
-          value={contents}
-          _onChange={changeContents}
-        />
-        {is_edit ? (<Button bg='gray' text="게시글 수정" _onClick={editPost} ></Button>)
-          : (<Button bg='gray' text="게시글 작성" _onClick={addPost} ></Button>)}
+        <Grid padding="16px">
+          <Input label="게시글 내용" placeholder="게시글 작성" multiLine
+            value={contents}
+            _onChange={changeContents}
+          />
+          {is_edit ? (<Button bg='gray' text="게시글 수정" _onClick={editPost} ></Button>)
+            : (<Button bg='gray' text="게시글 작성" _onClick={addPost} ></Button>)}
 
 
 
-      </Grid>
+        </Grid>
+      </Align>
     </React.Fragment>
   );
 }
+
+const Align = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
+
 export default PostWrite;

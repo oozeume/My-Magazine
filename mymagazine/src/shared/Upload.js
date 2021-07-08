@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRef } from 'react';
 
+import styled from 'styled-components';
+
 import Button from '../elements/Button';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +19,7 @@ const Upload = (props) => {
     console.log(e.target.files); // FileList {0:File, length: 1}
     console.log(e.target.files[0]); // File 객체 안의 내용 
     console.log(fileInput.current.files[0]); // 우리가 원하는 해당 이미지 파일
-  
+
     const reader = new FileReader(); // FileReader라는 객체 만들었다
     const file = fileInput.current.files[0];
 
@@ -43,15 +45,26 @@ const Upload = (props) => {
 
   return (
     <React.Fragment>
-      <input
-        type="file"
-        ref={fileInput}
-        onChange={selectFile}
-        disabled={uploading}
-      />
-      <Button _onClick={uploadFB} text="사진 업로드 하기" color='#fff'></Button>
+      <Align>
+        <input
+          type="file"
+          ref={fileInput}
+          onChange={selectFile}
+          disabled={uploading}
+        />
+        <Button
+        margin="10px 0px 10px 0px"
+          _onClick={uploadFB} text="사진 업로드 하기" color='#fff'></Button>
+      </Align>
     </React.Fragment>
   );
 }
+
+const Align = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
 
 export default Upload;

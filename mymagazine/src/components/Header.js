@@ -48,7 +48,9 @@ const Header = (props) => {
           </Grid>
 
           <Grid is_flex>
-            <Button color='#fff' bg='black' text='SIGNUP' padding='12px'
+            <Button 
+            margin="0px 10px 0px 0px"
+            color='#fff' bg='black' text='SIGNUP' padding='12px'
               _onClick={() => {
                 history.push('/signup');
               }}
