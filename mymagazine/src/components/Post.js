@@ -1,8 +1,12 @@
 import React from "react";
+import styled from "styled-components";
 
 import Button from "../elements/Button";
 import Image from "../elements/Image";
 import Text from "../elements/Text";
+import Grid from "../elements/Grid";
+
+import HeartButton from "./HeartButton";
 
 import { history } from "../redux/configStore";
 
@@ -10,29 +14,39 @@ import { history } from "../redux/configStore";
 const Post = (props) => {
   return (
     <React.Fragment>
-      <Image shape="circle" src={props.src} />
-      <Text bold>{props.user_info.nickname}</Text>
-      <Text>{props.insert_dt}</Text>
-      {props.is_me && (
-        <Button
-          color="#fff"
-          text="edit"
-          width="auto"
-          margin="4px"
-          padding="4px"
-          _onClick={() => {
-            history.push(`/write/${props.id}`);
-          }}>
-          
-        </Button>
-      )}
+      <Border>
+        <Grid is_flex>
+          <Grid is_flex>
+            <Image shape="circle" src={props.src} />
+            <Text bold>{props.user_info.nickname}</Text>
+          </Grid>
+          <Text>{props.insert_dt}</Text>
 
-      <Text>{props.contents}</Text>
-      <Image shape="rectangle" src={props.image_url} />
-      <Text margin="0px" bold>
-        댓글 {props.comment_cnt}개
-      </Text>
+        </Grid>
+        <Grid is_flex>
+          <Text>{props.contents}</Text>
+          {props.is_me && (
+            <Button color="#fff" text="edit" width="auto" margin="4px" padding="4px"
+              _onClick={() => {
+                history.push(`/write/${props.id}`);
+              }}>
+            </Button>
+          )}
+        </Grid>
+        <Image shape="rectangle" src={props.image_url} />
 
+        <Grid is_flex>
+          <Text margin="0px" bold>
+            댓글 {props.comment_cnt}개
+          </Text>
+          <Text margin="0px" bold>
+            좋아요 {props.like_cnt}개
+          </Text>
+        </Grid>
+
+        {/* 좋아요 버튼은 위치만 잡아줄게요! */}
+        <HeartButton></HeartButton>
+      </Border>
     </React.Fragment>
   )
 }
@@ -48,5 +62,12 @@ Post.defaultProps = {
   insert_dt: "2021-02-27 10:00:00",
   is_me: false,
 };
+
+const Border = styled.div`
+  border: 1px solid black;
+  max-width: 450px;
+  margin-bottom: 30px;
+  padding: 20px;
+`;
 
 export default Post;

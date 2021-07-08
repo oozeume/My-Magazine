@@ -14,7 +14,7 @@ const EDIT_POST = "EDIT_POST";
 const setPost = createAction(SET_POST, (post_list) => ({ post_list }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
 // 어떤거를 수정할지 알아야하니까 post_id필요로한다. 그리고 post 딕셔너리
-const editPost = createAction(EDIT_POST, (post_id, post) => ({ post_id, post,}));
+const editPost = createAction(EDIT_POST, (post_id, post) => ({ post_id, post, }));
 
 // initialState
 // 실제 리듀서가 사용할 initialState
@@ -37,8 +37,38 @@ const initialPost = {
 }
 
 // Middleware ActionCreator
+
+// 게시글 하나만 가져오는 함수
+// 상세 페이지에 바로 접근 할 때를 대비
+const getOnePostFB = (id) => {
+  return function (dispatch, getState, { history }) {
+    
+    const postDB = firestore.collection('magazine');
+    postDB.doc(id).get().then((doc) => {
+
+      let _post = doc.data();
+        let post = Object.keys(_post).reduce(
+          (acc, cur) => {
+            if (cur.indexOf("user_") !== -1) {
+              return {
+                ...acc,
+                user_info: { ...acc.user_info, [cur]: _post[cur] },
+              };
+            }
+            return { ...acc, [cur]: _post[cur] };
+          },
+          { id: doc.id, user_info: {} }
+        );
+
+      // 하나를 가져오지만, 게시글 목록은 배열이잖아요! 배열 형태에 맞게 []로 싸줍니다.
+      dispatch(setPost([post]));
+    });
+  }
+}
+
+
 const editPostFB = (post_id = null, post = {}) => {
-  return function (dispatch, getState, { history }){
+  return function (dispatch, getState, { history }) {
     if (!post_id) {
       console.log('게시물 정보가 없어요!');
       return;
@@ -46,7 +76,7 @@ const editPostFB = (post_id = null, post = {}) => {
 
     const _image = getState().image.preview_image;
 
-    const _post_index = getState().post.list.findIndex((p)=> p.id === post_id);
+    const _post_index = getState().post.list.findIndex((p) => p.id === post_id);
     const _post = getState().post.list[_post_index];
 
     console.log(_post);
@@ -54,29 +84,29 @@ const editPostFB = (post_id = null, post = {}) => {
     const postDB = firestore.collection('magazine');
 
     // preview에 있는 이미지랑 _post의 image_url이랑 같은지 확인
-    if (_image === _post.image_url){
-      postDB.doc(post_id).update(post).then((doc)=> {
-        dispatch(editPost(post_id, {...post}));
+    if (_image === _post.image_url) {
+      postDB.doc(post_id).update(post).then((doc) => {
+        dispatch(editPost(post_id, { ...post }));
         history.replace("/");
       });
       return;
     } else {
       const user_id = getState().user.user.uid;
       const _upload = storage.ref(`images/${user_id}_${new Date().getTime()}`)
-      .putString(_image, "data_url");
+        .putString(_image, "data_url");
 
-      _upload.then((snapshot)=> {
-        snapshot.ref.getDownloadURL().then((url)=> {
+      _upload.then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((url) => {
           console.log(url);
           return url;
-        }).then((url)=>{
-          postDB.doc(post_id).update({ ...post, image_url: url }).then((doc)=>{
+        }).then((url) => {
+          postDB.doc(post_id).update({ ...post, image_url: url }).then((doc) => {
             dispatch(editPost(post_id, { ...post, image_url: url }));
             history.replace('/');
           });
-        }).catch((error)=>{
+        }).catch((error) => {
           window.alert("앗! 이미지 업로드에 문제가 있어요!");
-            console.log("앗! 이미지 업로드에 문제가 있어요!", error);
+          console.log("앗! 이미지 업로드에 문제가 있어요!", error);
         })
       })
     }
@@ -151,7 +181,7 @@ const addPostFB = (contents = "") => { // PostWrite.js에서 썼던 contents 받
     console.log(typeof _image);
     //ref()안에 파일 이름을 넣어주는데(파일 이름 지정해주는 방식-작성자id와 현재시간)- 한사람당 같은 시간에 한장밖에 못올리니까
     const _upload = storage.ref(`images/${user_info.user_id}_${new Date().getTime()}`).putString(_image, "data_url");
-    
+
     _upload.then((snapshot) => {
       snapshot.ref.getDownloadURL().then(url => {
         console.log(url); // 링크 이제 받아왔으니까 파이어스토어에 저장할 때 image_url 같이 넣어줄 수 있겠다. 
@@ -159,21 +189,21 @@ const addPostFB = (contents = "") => { // PostWrite.js에서 썼던 contents 받
         return url; //여기서 리턴해준 url을 .then()에서 사용할 수 있다. 
       }).then((url) => {
         postDB.add({ ...user_info, ..._post, image_url: url })
-        .then((doc) => {
-          // add해줄거에다가 아이디도 추가해준다. 
-          let post = { user_info, ..._post, id: doc.id, image_url: url };
-          dispatch(addPost(post));
-          history.replace("/");
+          .then((doc) => {
+            // add해줄거에다가 아이디도 추가해준다. 
+            let post = { user_info, ..._post, id: doc.id, image_url: url };
+            dispatch(addPost(post));
+            history.replace("/");
 
 
-          // 이미지 업로드하고나면 프리뷰 다시 기본값으로 보여야하니까. 
-          dispatch(imageActions.setPreview(null)); 
-          
-        }).catch((error) => {
-          window.alert('post 작성 실패');
-          console.log('post 작성 실패', error);
-        });
-      }).catch((error)=> {
+            // 이미지 업로드하고나면 프리뷰 다시 기본값으로 보여야하니까. 
+            dispatch(imageActions.setPreview(null));
+
+          }).catch((error) => {
+            window.alert('post 작성 실패');
+            console.log('post 작성 실패', error);
+          });
+      }).catch((error) => {
         window.alert('앗, 이미지 업로드에 문제가 있어요');
         console.log('앗, 이미지 업로드에 문제가 있어요', error);
       })
@@ -190,13 +220,26 @@ export default handleActions(
   {
     [SET_POST]: (state, action) => produce(state, (draft) => {
       draft.list = action.payload.post_list;
+
+      draft.list = draft.list.reduce((acc, cur) => {
+        if (acc.findIndex((a) => a.id === cur.id) === -1) {
+          return [...acc, cur];
+        } else {
+          acc[acc.findIndex((a) => a.id === cur.id)] = cur;
+          return acc;
+        }
+      }, []);
     }),
+
     [ADD_POST]: (state, action) => produce(state, (draft) => {
       draft.list.unshift(action.payload.post);
     }),
+
     [EDIT_POST]: (state, action) => produce(state, (draft) => {
-      let index = draft.list.findIndex((p)=> p.id === action.payload.post_id);
-      draft.list[index] = {...draft.list[index], ...action.payload.post};
+      // 배열의 몇 번째에 있는 지 찾는다
+      let index = draft.list.findIndex((p) => p.id === action.payload.post_id);
+      // 해당 위치에 넣어준다
+      draft.list[index] = { ...draft.list[index], ...action.payload.post };
     }),
   }, initialState
 );
@@ -209,6 +252,7 @@ const actionCreators = {
   getPostFB,
   addPostFB,
   editPostFB,
+  getOnePostFB,
 }
 
 export { actionCreators };
