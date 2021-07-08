@@ -29,33 +29,33 @@ const PostList = (props) => {
   return (
     <React.Fragment>
       <Align>
-        {/* post_list를 props로 다 넘겨주는 작업 */}
-        {post_list.map((post, index) => {
-          if (post.user_info.user_id === user_info?.uid) {
-            return (
-              <Grid
-                _onClick={() => {
-                  console.log('포스트 클릭했어');
-                  history.push(`/post/${post.id}`);
-                }}>
-                <Post {...post} key={post.id}
-                  is_me
-                />
-              </Grid>
-            );
-          } else {
-            return (
-              <Grid
-                _onClick={() => {
-                  console.log('포스트 클릭했어');
-                  history.push(`/post/${post.id}`);
-                }}>
-                <Post {...post} />
-              </Grid>
+        <Grid>
+          {/* post_list를 props로 다 넘겨주는 작업 */}
+          {post_list.map((post, index) => {
+            if (post.user_info.user_id === user_info?.uid) {
+              return (
+                <Grid
+                  _onClick={() => {
+                    console.log('포스트 클릭했어');
+                    history.push(`/post/${post.id}`);
+                  }}>
+                  <Post {...post} key={post.id} is_me />
+                </Grid>
+              );
+            } else {
+              return (
+                <Grid
+                  _onClick={() => {
+                    console.log('포스트 클릭했어');
+                    history.push(`/post/${post.id}`);
+                  }}>
+                  <Post {...post} key={post.id} />
+                </Grid>
 
-            );
-          }
-        })}
+              );
+            }
+          })}
+        </Grid>
       </Align>
     </React.Fragment>
   )

@@ -1,9 +1,13 @@
 import React from "react";
 import { useEffect } from "react";
 
-import CommentList from "../components/CommentList";
+import styled from "styled-components";
+
 import Post from "../components/Post";
-import CommentWrite from "../components/CommentWrite";
+// import CommentWrite from "../components/CommentWrite";
+// import CommentList from "../components/CommentList";
+
+import Grid from "../elements/Grid";
 
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
@@ -32,13 +36,23 @@ const PostDetail = (props) => {
 
   return (
     <React.Fragment>
-
-      {post && (<Post {...post} is_me={post.user_info.user_id === user_info?.uid} /> )}
-      
-      <CommentWrite />
-      <CommentList />
+      <Align>
+        <Grid is_flex>
+          {post && (<Post {...post} is_me={post.user_info.user_id === user_info?.uid} />)}
+        </Grid>
+        {/* <CommentWrite /> */}
+        {/* <CommentList /> */}
+      </Align>
     </React.Fragment>
   )
 }
+
+const Align = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+`;
 
 export default PostDetail;

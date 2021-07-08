@@ -17,7 +17,7 @@ const Button = (props) => {
   if (is_float) {
     return (
       <React.Fragment>
-        <FloatBtn onClick={_onClick}>{text? text : children}</FloatBtn>
+        <FloatBtn {...styles} onClick={_onClick}>{text? text : children}</FloatBtn>
       </React.Fragment>
     );
   }
@@ -55,7 +55,7 @@ const ElementBtn = styled.button`
 const FloatBtn = styled.button`
   width: 50px;
   height: 50px;
-  background-color: purple;
+  background-color: black;
   color: #ffffff;
   box-sizing: border-box;
   font-size: 36px;

@@ -46,6 +46,7 @@ function App() {
       </ConnectedRouter>
       <Permit>
         <Button
+          bg='black'
           is_float
           text='+'
           _onClick={() => {

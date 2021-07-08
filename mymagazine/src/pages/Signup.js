@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 
+import styled from "styled-components";
+
 import Text from "../elements/Text";
 import Button from "../elements/Button";
 import Grid from "../elements/Grid";
@@ -34,38 +36,51 @@ const Signup = (props) => {
   }
 
   return (
-    <div>
-      <Text size="42px" bold >SIGNUP</Text>
-      <Input label="이메일" placeholder="이메일을 입력해주세요"
-        _onChange={(e) => {
-          setId(e.target.value);
-        }}
-      ></Input>
-      <Input label="닉네임" placeholder="닉네임을 입력해주세요"
-        _onChange={(e) => {
-          setNickname(e.target.value);
-        }}
-      ></Input>
-      <Input label="패스워드" placeholder="패스워드를 입력해주세요"
-        type="password"
-        _onChange={(e) => {
-          setPwd(e.target.value);
-        }}
-      ></Input>
-      <Input label="패스워드 확인" placeholder="패스워드를 확인해주세요"
-        type="password"
-        _onChange={(e) => {
-          setPwdCheck(e.target.value);
-        }}
-      ></Input>
-      <Button color='#fff' bg='black'
-        text='회원가입하기'
-        _onClick={signup}
-      >
+    <React.Fragment>
+      <Align>
+        <Grid>
+        <Text size="42px" margin="0px 0px 20px 0px">SIGNUP</Text>
+        <Input label="이메일" placeholder="이메일을 입력해주세요"
+          _onChange={(e) => {
+            setId(e.target.value);
+          }}
+        ></Input>
+        <Input label="닉네임" placeholder="닉네임을 입력해주세요"
+          _onChange={(e) => {
+            setNickname(e.target.value);
+          }}
+        ></Input>
+        <Input label="패스워드" placeholder="패스워드를 입력해주세요"
+          type="password"
+          _onChange={(e) => {
+            setPwd(e.target.value);
+          }}
+        ></Input>
+        <Input label="패스워드 확인" placeholder="패스워드를 확인해주세요"
+          type="password"
+          _onChange={(e) => {
+            setPwdCheck(e.target.value);
+          }}
+        ></Input>
+        <Button 
+        margin="20px 0px 0px 0px"
+        color='#fff' bg='black'
+          text='회원가입하기'
+          _onClick={signup}
+        >
 
-      </Button>
-    </div>
+        </Button>
+        </Grid>
+      </Align>
+    </React.Fragment>
   )
 }
+
+const Align = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
 
 export default Signup;

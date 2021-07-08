@@ -5,13 +5,16 @@ import Button from "../elements/Button";
 import Image from "../elements/Image";
 import Text from "../elements/Text";
 import Grid from "../elements/Grid";
-
 import HeartButton from "./HeartButton";
 
 import { history } from "../redux/configStore";
+import { useDispatch } from "react-redux";
+import { actionCreators as postActions } from "../redux/modules/post";
 
 
 const Post = (props) => {
+  const dispatch = useDispatch();
+
   return (
     <React.Fragment>
       <Border>
@@ -36,16 +39,22 @@ const Post = (props) => {
         <Image shape="rectangle" src={props.image_url} />
 
         <Grid is_flex>
-          <Text margin="0px" bold>
+          {/* <Text margin="0px" bold>
             댓글 {props.comment_cnt}개
-          </Text>
+          </Text> */}
           <Text margin="0px" bold>
             좋아요 {props.like_cnt}개
           </Text>
-        </Grid>
 
-        {/* 좋아요 버튼은 위치만 잡아줄게요! */}
-        <HeartButton></HeartButton>
+          <HeartButton _onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dispatch(postActions.toggleLikeFB(props.id));
+          }}
+          is_like={props.is_like}
+          >
+          </HeartButton>
+        </Grid>
       </Border>
     </React.Fragment>
   )
@@ -58,7 +67,8 @@ Post.defaultProps = {
   },
   image_url: "https://mean0images.s3.ap-northeast-2.amazonaws.com/4.jpeg",
   contents: "고양이네요!",
-  comment_cnt: 10,
+  // comment_cnt: 10,
+  like_cnt: 10,
   insert_dt: "2021-02-27 10:00:00",
   is_me: false,
 };
